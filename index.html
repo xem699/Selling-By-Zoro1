@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selling By Zoro's Server Checker - Myanmar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu&display=swap');
+        body { font-family: 'Pyidaungsu', sans-serif; background: #0f172a; }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-md border border-slate-700">
+        <h2 class="text-2xl font-bold mb-6 text-center text-blue-400">Selling By Zoro's Server Checker</h2>
+
+        <div class="space-y-5">
+            <div>
+                <label class="block text-sm text-slate-400 mb-1">Player ID</label>
+                <input type="number" id="userId" placeholder="ဥပမာ - 12345678" 
+                       class="w-full p-3 rounded-lg bg-slate-900 border border-slate-700 focus:border-blue-500 outline-none text-white transition">
+            </div>
+            
+            <div>
+                <label class="block text-sm text-slate-400 mb-1">Zone ID (Server)</label>
+                <input type="number" id="zoneId" placeholder="ဥပမာ - 1234" 
+                       class="w-full p-3 rounded-lg bg-slate-900 border border-slate-700 focus:border-blue-500 outline-none text-white transition">
+            </div>
+
+            <button onclick="checkAccount()" id="checkBtn"
+                    class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg transition duration-200 shadow-lg">
+                အမည်စစ်ဆေးမည်
+            </button>
+        </div>
+
+        <div id="resultBox" class="mt-8 p-4 rounded-xl hidden bg-slate-900 border border-blue-500/30 text-center animate-pulse">
+            <p class="text-xs text-slate-500 uppercase tracking-widest">Account Nickname</p>
+            <p id="nickname" class="text-2xl font-black text-green-400 mt-1">...</p>
+        </div>
+    </div>
+
+    <script>
+        async function checkAccount() {
+            const userId = document.getElementById('userId').value;
+            const zoneId = document.getElementById('zoneId').value;
+            const resultBox = document.getElementById('resultBox');
+            const nicknameText = document.getElementById('nickname');
+            const btn = document.getElementById('checkBtn');
+
+            if (!userId || !zoneId) {
+                alert("ID နှင့် Zone ID ကို အရင်ဖြည့်ပါ");
+                return;
+            }
+
+            // Button ကို Loading ပြောင်းရန်
+            btn.innerText = "စစ်ဆေးနေသည်...";
+            btn.disabled = true;
+            resultBox.classList.add('hidden');
+
+            try {
+                // Vercel /api/check.js ဆီသို့ လှမ်းခေါ်ခြင်း
+                const response = await fetch(`/api/check?id=${userId}&zone=${zoneId}`);
+                const data = await response.json();
+
+                if (data && data.nickname) {
+                    resultBox.classList.remove('hidden');
+                    nicknameText.innerText = data.nickname;
+                } else {
+                    alert("ID မှားနေပါသည် သို့မဟုတ် ရှာမတွေ့ပါ");
+                }
+            } catch (err) {
+                alert("စနစ်ချို့ယွင်းနေပါသည်။ ခဏအကြာမှ ပြန်ကြိုးစားပါ။");
+            } finally {
+                btn.innerText = "အမည်စစ်ဆေးမည်";
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
